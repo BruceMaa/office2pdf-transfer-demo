@@ -41,8 +41,7 @@ public class OfficeUploadController {
 
         // 获取文档类型
         String fileExt = FilenameUtils.getExtension(file.getOriginalFilename());
-        String fileName = FilenameUtils.getName(file.getOriginalFilename());
-        String localPdfFileName = tmpDir + fileName + ".pdf";
+        String localPdfFileName = tmpDir + file.getOriginalFilename() + ".pdf";
 
         try {
             file.transferTo(localFile);

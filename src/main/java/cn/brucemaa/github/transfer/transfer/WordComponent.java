@@ -1,5 +1,6 @@
 package cn.brucemaa.github.transfer.transfer;
 
+import cn.brucemaa.github.transfer.util.CmdUtils;
 import com.jacob.activeX.ActiveXComponent;
 import com.jacob.com.ComFailException;
 import com.jacob.com.ComThread;
@@ -7,6 +8,9 @@ import com.jacob.com.Dispatch;
 import com.jacob.com.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * projectName:office2pdf-transfer-demo
@@ -16,7 +20,6 @@ import org.slf4j.LoggerFactory;
  * @since 2019-01-23.14:34
  */
 public class WordComponent {
-
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     private ActiveXComponent objWord;
 
@@ -45,16 +48,18 @@ public class WordComponent {
         objWord.setProperty("ScreenUpdating", new Variant(false));
         Dispatch documents = objWord.getProperty("Documents").toDispatch();
         try {
-            document = Dispatch.call(documents, "Open", filename,
-                    new Variant(false),
-                    // 是否只读
-                    new Variant(true),
-                    new Variant(false),
-                    new Variant("pwd")
-            ).toDispatch();
-            // 兼容性检查,为特定值false不正确
-            Dispatch.put(document, "Compatibility", false);
-            Dispatch.put(document, "RemovePersonalInformation", false);
+            Timer timer = new Timer(true);
+            TimerTask task = new TimerTask() {
+                @Override
+                public void run() {
+                    System.out.println("===========time is up=========");
+                    CmdUtils.killProcessWithFileName(filename);
+                }
+            };
+
+            timer.schedule(task, 30000);
+
+            document = Dispatch.call(documents, "Open", filename).toDispatch();
         } catch (ComFailException e) {
             logger.error("word filename: {}, open error: {}", filename, e);
             throw e;

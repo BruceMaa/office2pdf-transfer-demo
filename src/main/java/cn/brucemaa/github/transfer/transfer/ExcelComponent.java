@@ -40,13 +40,7 @@ public class ExcelComponent {
         objExcel.setProperty("Visible", new Variant(false));
         Dispatch workbooks = objExcel.getProperty("Workbooks").toDispatch();
         try {
-            wordbook = Dispatch.call(workbooks, "Open", filename,
-                    new Variant(false),
-                    // 是否只读
-                    new Variant(true),
-                    new Variant(false),
-                    new Variant("pwd")
-            ).toDispatch();
+            wordbook = Dispatch.call(workbooks, "Open", filename).toDispatch();
         } catch (ComFailException e) {
             logger.error("excel filename: {}, open error: {}", filename, e);
             throw e;
